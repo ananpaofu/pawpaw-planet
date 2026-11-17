@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>爪爪星球 · 赛博猫狗舍</title>
 <script>
-     window.SITE_VERSION = '1.6';
-  window.SITE_NOTES = '彻底修复刷新后重复领养与数据丢失：初始化前恢复完整存档。';
+       window.SITE_VERSION = '1.71';
+  window.SITE_NOTES = '优化手机端适配；弹幕列表可查看其他用户消息并显示头像。';
   window.RELAY_URL = 'wss://web-production-d6601cad.up.railway.app';
   (function () {
     var v = window.SITE_VERSION;
@@ -143,7 +143,7 @@
     s.onload = done;
     document.body.appendChild(s);
   }
-       load('app.js', function () { load('fixes4.js', function () { load('fixes2.js', function () { load('fixes3.js', function () { load('extras.js'); }); }); }); });
+           load('app.js', function () { load('fixes4.js', function () { load('fixes2.js', function () { load('fixes3.js', function () { load('extras.js', function () { load('fixes5b.js'); }); }); }); }); });
 
 })();
 </script>
