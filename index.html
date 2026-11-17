@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>爪爪星球 · 赛博猫狗舍</title>
 <script>
-  window.SITE_VERSION = '1.2';
-  window.SITE_NOTES = '本次更新：联机弹幕中继已接入，可与好友实时互动。';
+  window.SITE_VERSION = '1.4';
+  window.SITE_NOTES = '修复登录状态丢失与重复领养弹窗；记住账号并置顶错误提示；新手指引改为按钮随时查看，新增新手上路引导条。';
   window.RELAY_URL = 'wss://web-production-d6601cad.up.railway.app';
   (function () {
     var v = window.SITE_VERSION;
@@ -143,7 +143,7 @@
     s.onload = done;
     document.body.appendChild(s);
   }
-  load('app.js', function () { load('extras.js'); });
+    load('app.js', function () { load('fixes2.js', function () { load('extras.js'); }); });
 })();
 </script>
 </body>
