@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>爪爪星球 · 赛博猫狗舍</title>
+<script>
+  window.SITE_VERSION = '1.1';
+  window.SITE_NOTES = '本次更新：支持 Railway 联机弹幕，新增自动更新提示。';
+  window.RELAY_URL = '';
+  (function () {
+    var v = window.SITE_VERSION;
+    ['styles.css', 'extras.css'].forEach(function (file) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = file + '?v=' + v;
+      document.head.appendChild(link);
+    });
+  })();
+</script>
+</head>
+<body>
+<div class="scanlines" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">🐾</div>
+    <div class="brand-text">
+      <h1>爪爪星球 <span class="brand-en">CYBER PET HOUSE</span></h1>
+      <p>云撸猫狗 · 投喂留弹幕 · 赛博陪伴两不误 · <span id="siteVersion"></span></p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="account-pill" id="accountPill" role="button" tabindex="0" aria-label="注册登录或切换游客">👤 <span id="accountName">游客</span></div>
+    <div class="coin-pill" id="coinPill" role="button" tabindex="0" aria-label="查看贝壳赚取说明">🪙 <b id="coinCount">0</b> 贝壳</div>
+    <div class="room-pill" id="roomPill" role="button" tabindex="0" aria-label="设置房间号">🏠 <span id="roomName">公开舍</span></div>
+    <div class="online-pill"><span class="pulse"></span><b id="onlineCount">128</b> 位铲屎官在线</div>
+    <button class="ghost-btn" id="danmakuToggle" type="button" aria-pressed="true">💬 弹幕：开</button>
+  </div>
+</header>
+
+<div class="tab-row">
+  <div class="segmented" role="tablist" aria-label="选择猫舍或狗舍">
+    <button class="seg active" data-type="cat" role="tab" aria-selected="true">🐱 猫舍 <span>CAT</span></button>
+    <button class="seg" data-type="dog" role="tab" aria-selected="false">🐶 狗舍 <span>DOG</span></button>
+  </div>
+  <p class="tab-hint">点击宠物即可摸摸，投喂后记得留下弹幕和表情哦</p>
+</div>
+
+<div class="tool-row" id="toolRow" aria-label="更多玩法">
+  <button class="tool-btn" data-tool="game" type="button">🎮 限时小游戏</button>
+  <button class="tool-btn" data-tool="event" type="button">🎁 事件簿</button>
+  <button class="tool-btn" data-tool="task" type="button">📋 任务徽章</button>
+  <button class="tool-btn" data-tool="vote" type="button">🗳️ 弹幕投票</button>
+  <button class="tool-btn" data-tool="rain" type="button">🌈 表情雨</button>
+  <button class="tool-btn" data-tool="dress" type="button">👗 装扮</button>
+  <button class="tool-btn" data-tool="decor" type="button">🛋️ 布置宠物窝</button>
+  <button class="tool-btn" data-tool="album" type="button">📖 图鉴</button>
+  <button class="tool-btn" data-tool="gacha" type="button">🎲 盲盒</button>
+  <button class="tool-btn" data-tool="share" type="button">🖼️ 分享卡</button>
+  <button class="tool-btn" data-tool="afk" type="button" id="afkBtn">⏰ 挂机：关</button>
+  <button class="tool-btn" data-tool="sound" type="button" id="soundBtn">🔊 音效：开</button>
+</div>
+
+<main class="layout">
+  <aside class="panel pet-list-panel">
+    <div class="panel-head"><h2>舍内住客</h2><span class="badge" id="petCount">3 只</span></div>
+    <div class="pet-list" id="petList"></div>
+    <div class="panel-foot">🐾 每 30 秒消耗一点饱食度，记得常回来看看<br />🐾 点击住客卡片可以切换舞台上的宠物</div>
+  </aside>
+
+  <section class="center-col">
+    <div class="stage" id="stage">
+      <div class="stage-sky"></div>
+      <div class="stage-grid"></div>
+      <div class="stage-glow"></div>
+      <div class="stage-sign">MEOW <span>&</span> WOOF</div>
+      <div class="stage-plant">🪴</div>
+      <div class="danmaku-layer" id="danmakuLayer" aria-hidden="true"></div>
+      <div class="pet-zone">
+        <div class="pet-halo"></div>
+        <div class="pet-art" id="petArt" role="button" tabindex="0" aria-label="摸摸这只宠物"></div>
+        <div class="pet-shadow"></div>
+      </div>
+      <div class="reaction-layer" id="reactionLayer" aria-hidden="true"></div>
+      <div class="bubble-layer" id="bubbleLayer" aria-hidden="true"></div>
+      <div class="event-layer" id="eventLayer" aria-hidden="true"></div>
+      <div class="game-layer" id="gameLayer" aria-hidden="true"></div>
+      <div class="emoji-rain-layer" id="emojiRainLayer" aria-hidden="true"></div>
+      <div class="nameplate">
+        <span class="plate-id" id="plateId">ID: CAT-001</span>
+        <h2 id="petName">小橘</h2>
+        <p id="petDesc">干饭一级选手</p>
+      </div>
+    </div>
+
+    <div class="panel stat-panel">
+      <div class="stat-head"><span>状态面板 / STATUS</span><span class="mood-label" id="moodText">心情超棒</span></div>
+      <div class="stat-bars">
+        <div class="stat"><span>🍚 饱食度</span><div class="bar"><i id="barSatiety"></i></div><b id="valSatiety">78</b></div>
+        <div class="stat"><span>💖 心情值</span><div class="bar pink"><i id="barMood"></i></div><b id="valMood">86</b></div>
+        <div class="stat"><span>🤝 亲密度</span><div class="bar cyan"><i id="barBond"></i></div><b id="valBond">62</b></div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn" id="btnPet" type="button"><span>🖐️</span> 摸摸头 <small>+心情 +亲密</small></button>
+      <button class="action-btn" id="btnPlay" type="button"><span>🧶</span> 逗一逗 <small>消耗一点饱食度</small></button>
+      <button class="action-btn primary" id="btnFocusFeed" type="button"><span>🍽️</span> 去投喂 <small>选点好吃的</small></button>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <section class="panel" id="feedPanel">
+      <div class="panel-head"><h2>赛博投喂台</h2><span class="badge" id="feedingTo">喂：小橘</span></div>
+      <div class="food-grid" id="foodGrid"></div>
+      <p class="tip">投喂会提升饱食度，猫猫和狗狗的菜单不一样哦</p>
+    </section>
+
+    <section class="panel danmaku-panel">
+      <div class="panel-head"><h2>弹幕 & 表情</h2><span class="badge" id="dmCount">0 条</span></div>
+      <div class="emoji-row" id="emojiRow"></div>
+      <form class="dm-form" id="dmForm">
+        <input id="dmInput" maxlength="40" autocomplete="off" placeholder="说点什么，飘到舞台上去…" aria-label="弹幕内容" />
+        <button type="submit" class="send-btn">发送 ➤</button>
+      </form>
+      <div class="dm-list" id="dmList"></div>
+    </section>
+  </aside>
+</main>
+
+<div class="modal-root" id="modalRoot" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function () {
+  var v = window.SITE_VERSION || '1.0';
+  var tag = document.getElementById('siteVersion');
+  if (tag) tag.textContent = 'v' + v;
+  function load(file, done) {
+    var s = document.createElement('script');
+    s.src = file + '?v=' + v;
+    s.async = false;
+    s.onload = done;
+    document.body.appendChild(s);
+  }
+  load('app.js', function () { load('extras.js'); });
+})();
+</script>
+</body>
+</html>
